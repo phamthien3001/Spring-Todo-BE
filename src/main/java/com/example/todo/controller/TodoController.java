@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class TodoController {
     private final TodoService todoService;
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PageResponse<TodoResponse>> getAllTodos(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -28,16 +30,19 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TodoResponse> getTodoById(@PathVariable Long id) {
         return ResponseEntity.ok(todoService.getTodoById(id));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TodoResponse> createTodo(@Valid @RequestBody TodoRequest todoRequest) {
         return new ResponseEntity<>(todoService.createTodo(todoRequest), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TodoResponse> updateTodo(
             @PathVariable Long id,
             @Valid @RequestBody TodoRequest todoRequest) {
@@ -45,6 +50,7 @@ public class TodoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
         todoService.deleteTodo(id);
         return ResponseEntity.noContent().build();
